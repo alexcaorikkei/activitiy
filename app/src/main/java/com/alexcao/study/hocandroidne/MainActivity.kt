@@ -9,10 +9,12 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
-class MainActivity : AppCompatActivity() {
+val MAIN_ACTIVITY_DATA = "main_activity_data"
 
-    private fun startNewActivity() {
+class MainActivity : AppCompatActivity() {
+    private fun startNewActivity(key: String, data: String) {
         val intent = Intent(this, NewActivity::class.java)
+        intent.putExtra(key, data)
         startActivity(intent)
     }
 
@@ -42,7 +44,10 @@ class MainActivity : AppCompatActivity() {
 
         val tapMeButton:ImageButton = findViewById<ImageButton>(R.id.button)
         tapMeButton.setOnClickListener {
-            startNewActivity()
+            startNewActivity(
+                MAIN_ACTIVITY_DATA,
+                "This is the data from MainActivity"
+            )
         }
 
         val takeImageButton = findViewById<ImageButton>(R.id.take_image_btn)

@@ -3,4 +3,5 @@
     <string name="background">background</string>
     <string name="tap_me">Tap Me!</string>
     <string name="take_image">Take Image</string>
+    <string name="no_data">No Data</string>
 </resources>
