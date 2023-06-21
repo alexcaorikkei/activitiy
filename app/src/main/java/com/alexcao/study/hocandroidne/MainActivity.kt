@@ -1,24 +1,56 @@
 package com.alexcao.study.hocandroidne
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
+import android.provider.MediaStore
+import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 
 class MainActivity : AppCompatActivity() {
+
+    private fun startNewActivity() {
+        val intent = Intent(this, NewActivity::class.java)
+        startActivity(intent)
+    }
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        when (result.resultCode) {
+            Activity.RESULT_OK -> {
+                println("OK")
+            }
+            Activity.RESULT_CANCELED -> {
+                println("RESULT_CANCELED")
+            }
+        }
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        resultLauncher.launch(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         println("onCreate")
         println("This is the callback and called when the activity is first created.")
         Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show()
-        val tapMeButton:Button = findViewById<Button>(R.id.button)
+
+
+        val tapMeButton:ImageButton = findViewById<ImageButton>(R.id.button)
         tapMeButton.setOnClickListener {
-            val intent = Intent(this, NewActivity::class.java)
-            startActivity(intent)
+            startNewActivity()
+        }
+
+        val takeImageButton = findViewById<ImageButton>(R.id.take_image_btn)
+        takeImageButton.setOnClickListener {
+            pickImageFromGallery()
         }
     }
+
     override fun onStart() {
         super.onStart()
         println("onStart")
