@@ -4,4 +4,6 @@
     <string name="tap_me">Tap Me!</string>
     <string name="take_image">Take Image</string>
     <string name="no_data">No Data</string>
+    <string name="count_initial">0</string>
+    <string name="count_description">Tap this button to increase value</string>
 </resources>

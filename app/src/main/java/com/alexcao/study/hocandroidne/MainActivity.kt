@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,6 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 val MAIN_ACTIVITY_DATA = "main_activity_data"
 
 class MainActivity : AppCompatActivity() {
+    private val COUNTER_DATA = "counter_data"
+
     private fun startNewActivity(key: String, data: String) {
         val intent = Intent(this, NewActivity::class.java)
         intent.putExtra(key, data)
@@ -34,6 +37,10 @@ class MainActivity : AppCompatActivity() {
         resultLauncher.launch(intent)
     }
 
+    private lateinit var tapMeButton:ImageButton
+    private lateinit var takeImageButton:ImageButton
+    private lateinit var countButton:Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,8 +48,10 @@ class MainActivity : AppCompatActivity() {
         println("This is the callback and called when the activity is first created.")
         Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show()
 
+        tapMeButton = findViewById<ImageButton>(R.id.button)
+        takeImageButton = findViewById<ImageButton>(R.id.take_image_btn)
+        countButton = findViewById<Button>(R.id.count_button)
 
-        val tapMeButton:ImageButton = findViewById<ImageButton>(R.id.button)
         tapMeButton.setOnClickListener {
             startNewActivity(
                 MAIN_ACTIVITY_DATA,
@@ -50,10 +59,24 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        val takeImageButton = findViewById<ImageButton>(R.id.take_image_btn)
         takeImageButton.setOnClickListener {
             pickImageFromGallery()
         }
+
+        countButton.setOnClickListener {
+            var value = countButton.text.toString().toInt()
+            countButton.text = (++value).toString()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(COUNTER_DATA, countButton.text.toString())
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        findViewById<Button>(R.id.count_button).text = savedInstanceState.getString(COUNTER_DATA)
     }
 
     override fun onStart() {
