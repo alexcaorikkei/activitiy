@@ -34,3 +34,37 @@ onDestroy: Callback này được gọi khi user thoát hoàn toàn khỏi Activ
 **Visible lifetime**: Xảy ra giữa onStart() và onStop(). Lúc này, Activity hiện hữu trên màn hình và user có thể nhìn thấy nó kể cả khi Activity không nằm trên cùng (foreground) và tương tác với user. Giữa 2 hàm callback này, ta có thể lưu trữ các tài nguyên cần thiết cho việc hiển thị activity đến user. Ví dụ như khi bạn có thể tạo register BroadcastReceiver ở onStart() để theo đõi những thay đổi liên quan đến giao diện người dùng (UI) và unregister nó ở onStop() khi user không còn nhìn thấy những gì được hiển thị
 
 **Foreground lifetime**: Xảy ra giữa onResume() và onPause(). Trong thời gian này, Activiy visible, active và có thể tương tác với user. Một Activity có thể thường xuyên qua lại giữa 2 trạng thái này(khi thiết bị rơi vào trạng thái sleep hoặc bị activity khác che khuất không hoàn toàn).
+
+
+## Khởi động một activity khác
+Để khởi động 1 activity, chúng ta sử dụng Intent
+```kotlin
+val intent = Intent(this, SecondActivity::class.java)
+startActivity(intent)
+```
+Lúc này, **SecondActivity** sẽ được đưa lên top của BackStack. Activity hiện tại sẽ lần lượt gọi **onPause()** và **onStop()**. Khi **SecondActivity** bị destroy, **FirstActivity** sẽ được đưa lên top và gọi **onRestart()**, **onStart()** và **onResume()**. Ngoài ra, chúng ta cũng có thể gửi và nhận dữ liệu giữa các màn hình thông qua Intent.
+**FirstActivity**:
+```kotlin
+val intent = Intent(this, SecondActivity::class.java)
+intent.putExtra("key", "value")
+startActivity(intent)
+```
+
+**SecondActivity**:
+```kotlin
+val data = intent.getStringExtra("key")
+```
+
+# Lưu trữ và phục hồi trạng thái của Activity
+Khi một Activity bị destroy(có thể do nhiều vấn đề như thiếu bộ nhớ, thay đổi hướng xoay màn hình,...), tất cả các thông tin của nó sẽ bị mất. Để giữ lại thông tin đó, chúng ta có thể sử dụng **onSaveInstanceState()** để lưu trữ và **onRestoreInstanceState()** để phục hồi lại thông tin đó.
+```kotlin
+override fun onSaveInstanceState(outState: Bundle) {
+    outState.putString("key", "value")
+    super.onSaveInstanceState(outState)
+}
+
+override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+    super.onRestoreInstanceState(savedInstanceState)
+    val data = savedInstanceState.getString("key")
+}
+```
